@@ -1186,22 +1186,20 @@ app.use(errorHandler);
 // Otherwise return an API/server status response.
 
 app.use((req, res) => {
-  const indexPath =
-    path.join(__dirname, 'index.html');
+  const indexPath = path.join(__dirname, 'index.html');
 
-
-  if (fs.existsSync(indexPath)) {
-    return res.sendFile(indexPath);
+  // Serve index.html for normal browser page requests
+  if (req.method === 'GET' && req.accepts('html')) {
+    if (fs.existsSync(indexPath)) {
+      return res.sendFile(indexPath);
+    }
   }
 
-
-  res.status(200).json({
-    message: 'EduSphere API is running',
-    status: 'success',
-    api: '/api'
+  // For missing files or unknown routes
+  res.status(404).json({
+    message: 'Route not found'
   });
 });
-
 
 // ============================================================
 // VERCEL SERVERLESS EXPORT
